@@ -1,0 +1,13 @@
+# ChainLens backend — pinned runtime dependencies (offline-installable via pip wheels)
+fastapi==0.115.6
+uvicorn==0.34.0
+pydantic==2.10.4
+pydantic-settings==2.7.1
+python-multipart==0.0.20
+pandas==2.2.3
+numpy==2.2.1
+scikit-learn==1.6.0
+joblib==1.4.2
+networkx==3.4.2
+reportlab==4.2.5
+defusedxml==0.7.1

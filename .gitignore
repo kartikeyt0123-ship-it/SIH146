@@ -1,0 +1,21 @@
+# Runtime data: cases, uploads, predictions, exports. Never committed.
+chainlens_data/
+
+# Python
+backend/.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Trained model bundles are build artefacts, rebuilt with chainlens.ml.train
+backend/model_artifacts/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

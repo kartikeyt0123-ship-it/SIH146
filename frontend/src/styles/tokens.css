@@ -1,0 +1,83 @@
+/* Design tokens.
+ *
+ * A restrained navy/slate investigation console. Every status colour is paired with a
+ * text label in the markup, so nothing is conveyed by colour alone.
+ */
+:root {
+  /* Surfaces */
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --surface-sunken: #f1f3f6;
+  --surface-raised: #ffffff;
+  --navy: #0f2540;
+  --navy-700: #16324f;
+  --navy-600: #1e4066;
+
+  /* Text */
+  --text: #17212f;
+  --text-muted: #5a6a7d;
+  --text-faint: #8794a5;
+  --text-on-navy: #e8eef5;
+  --text-on-navy-muted: #9fb2c8;
+
+  /* Lines */
+  --line: #dfe4ea;
+  --line-strong: #c6cfd9;
+
+  /* Accents */
+  --accent: #1d4ed8;
+  --accent-soft: #e8efff;
+
+  /* Priority bands */
+  --high: #b42318;
+  --high-bg: #fdecea;
+  --medium: #b54708;
+  --medium-bg: #fef4e6;
+  --low: #35618a;
+  --low-bg: #eaf1f8;
+
+  /* Semantic */
+  --ok: #17694a;
+  --ok-bg: #e7f4ee;
+  --warn: #8a5a00;
+  --warn-bg: #fdf3e0;
+  --danger: #b42318;
+  --danger-bg: #fdecea;
+  --info-bg: #eef2f7;
+
+  /* Graph node kinds (each is also labelled in the legend and by shape) */
+  --node-address: #1e4066;
+  --node-transaction: #7a5199;
+  --node-endpoint: #6b7a8d;
+
+  /* Type */
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    "Liberation Mono", monospace;
+
+  --fs-xs: 11px;
+  --fs-sm: 12px;
+  --fs-base: 13px;
+  --fs-md: 14px;
+  --fs-lg: 16px;
+  --fs-xl: 20px;
+  --fs-2xl: 26px;
+
+  /* Spacing */
+  --s1: 4px;
+  --s2: 8px;
+  --s3: 12px;
+  --s4: 16px;
+  --s5: 24px;
+  --s6: 32px;
+  --s7: 48px;
+
+  --radius: 6px;
+  --radius-sm: 4px;
+  --shadow-sm: 0 1px 2px rgba(15, 37, 64, 0.06);
+  --shadow: 0 2px 8px rgba(15, 37, 64, 0.09);
+  --shadow-lg: 0 8px 28px rgba(15, 37, 64, 0.14);
+
+  --header-h: 52px;
+}

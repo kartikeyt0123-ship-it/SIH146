@@ -1,0 +1,265 @@
+{
+  "address_benchmark_rules_only": {
+    "basis": "structural detectors only; the model contributes no part of this decision",
+    "f1": 0.8285714285714285,
+    "false_negatives": 0,
+    "false_positive_rate": 0.0412796697626419,
+    "false_positive_rate_denominator": 2907,
+    "false_positives": 120,
+    "negatives_in_truth": 2907,
+    "positives_in_truth": 290,
+    "precision": 0.7073170731707317,
+    "precision_denominator": 410,
+    "predicted_positive": 410,
+    "recall": 1.0,
+    "recall_denominator": 290,
+    "true_negatives": 2787,
+    "true_positives": 290
+  },
+  "address_ranking_metrics": {
+    "base_rate": 0.09071004066312167,
+    "negatives": 2907,
+    "positives": 290,
+    "variants": {
+      "combined": {
+        "note": "review priority: 0.60 x anomaly percentile + 0.40 x rule severity",
+        "pr_auc": 0.8036954237581055,
+        "precision_at_k": [
+          {
+            "denominator": 20,
+            "hits": 18,
+            "k": 20,
+            "precision": 0.9
+          },
+          {
+            "denominator": 50,
+            "hits": 34,
+            "k": 50,
+            "precision": 0.68
+          },
+          {
+            "denominator": 100,
+            "hits": 80,
+            "k": 100,
+            "precision": 0.8
+          }
+        ]
+      },
+      "model_only": {
+        "note": "anomaly percentile alone; unscored addresses rank last",
+        "pr_auc": 0.8420719825094846,
+        "precision_at_k": [
+          {
+            "denominator": 20,
+            "hits": 19,
+            "k": 20,
+            "precision": 0.95
+          },
+          {
+            "denominator": 50,
+            "hits": 48,
+            "k": 50,
+            "precision": 0.96
+          },
+          {
+            "denominator": 100,
+            "hits": 91,
+            "k": 100,
+            "precision": 0.91
+          }
+        ]
+      },
+      "rules_only": {
+        "note": "binary rule prediction used as the ranking score",
+        "pr_auc": 0.6787033076404145,
+        "precision_at_k": [
+          {
+            "denominator": 20,
+            "hits": 10,
+            "k": 20,
+            "precision": 0.5
+          },
+          {
+            "denominator": 50,
+            "hits": 31,
+            "k": 50,
+            "precision": 0.62
+          },
+          {
+            "denominator": 100,
+            "hits": 64,
+            "k": 100,
+            "precision": 0.64
+          }
+        ]
+      }
+    }
+  },
+  "coverage": {
+    "addresses_in_ground_truth": 3197,
+    "addresses_in_predictions": 3197,
+    "in_ground_truth_only": 0,
+    "in_predictions_only": 0,
+    "join_note": "wallet_id in the ground-truth file is joined to the address identifier. These are address identifiers; they are not verified wallets or people.",
+    "joined_but_unscored_by_model": 0,
+    "joined_on_wallet_id_to_address": 3197,
+    "unscored_note": "Unscored addresses are counted here and are included in the binary benchmark as rule-based predictions; they are not dropped."
+  },
+  "dataset_sha256": "4f01ef336366867485db22c1113036e8f2b5bbd0c51c4b036698c4491e8de3de",
+  "detector_version": "detectors-2026.09.1",
+  "excluded_from_binary_benchmark": {
+    "high_activity_context": "a safeguard; reports context, never a classification",
+    "shared_ip_observation": "a safeguard; a network sighting is not a classification",
+    "statistical_anomaly": "an unexplained deviation with no named pattern claimed"
+  },
+  "generated_at": "2026-09-25T11:03:24Z",
+  "label_mapping": {
+    "coinjoin_like": "maps to coinjoin_mixing (projected from the transaction onto its participants)",
+    "collection_pattern": "maps to ransomware_collector",
+    "common_control": "maps to same_actor_cluster",
+    "payment_participant": "maps to ransomware_victim_payment",
+    "peeling_sequence": "maps to peel_chain_hop"
+  },
+  "model_status": "used",
+  "model_version": "if-v1-20260925-7a1719",
+  "notes": [
+    "Address-level, transaction-level and clustering results are distinct measurements and are not interchangeable.",
+    "The supplied binary label marks mixing participants and victim-payment addresses as suspicious. That definition is reproduced for comparability; the per-role breakdown is where victim participation is kept separate from offender attribution.",
+    "Thresholds and score weights were frozen before this file was read."
+  ],
+  "per_ground_truth_pattern": {
+    "coinjoin_mixing": {
+      "flagged_by_rules": 230,
+      "labelled_suspicious": 230,
+      "predicted_patterns": {
+        "coinjoin_like": 230,
+        "statistical_anomaly": 40
+      },
+      "recall_within_pattern": 1.0,
+      "support": 230
+    },
+    "legit_exchange_high_volume": {
+      "flagged_by_rules": 0,
+      "labelled_suspicious": 0,
+      "predicted_patterns": {
+        "high_activity_context": 1,
+        "statistical_anomaly": 1
+      },
+      "recall_within_pattern": 0.0,
+      "support": 1
+    },
+    "normal": {
+      "flagged_by_rules": 120,
+      "labelled_suspicious": 0,
+      "predicted_patterns": {
+        "collection_pattern": 4,
+        "common_control": 12,
+        "payment_participant": 69,
+        "peeling_sequence": 37
+      },
+      "recall_within_pattern": 0.041379310344827586,
+      "support": 2900
+    },
+    "peel_chain_hop": {
+      "flagged_by_rules": 14,
+      "labelled_suspicious": 14,
+      "predicted_patterns": {
+        "peeling_sequence": 14,
+        "shared_ip_observation": 1
+      },
+      "recall_within_pattern": 1.0,
+      "support": 14
+    },
+    "ransomware_collector": {
+      "flagged_by_rules": 1,
+      "labelled_suspicious": 1,
+      "predicted_patterns": {
+        "collection_pattern": 1
+      },
+      "recall_within_pattern": 1.0,
+      "support": 1
+    },
+    "ransomware_victim_payment": {
+      "flagged_by_rules": 40,
+      "labelled_suspicious": 40,
+      "predicted_patterns": {
+        "payment_participant": 40
+      },
+      "recall_within_pattern": 1.0,
+      "support": 40
+    },
+    "same_actor_cluster": {
+      "flagged_by_rules": 5,
+      "labelled_suspicious": 5,
+      "predicted_patterns": {
+        "common_control": 5,
+        "shared_ip_observation": 1
+      },
+      "recall_within_pattern": 1.0,
+      "support": 5
+    },
+    "shared_ip_innocent_noise": {
+      "flagged_by_rules": 0,
+      "labelled_suspicious": 0,
+      "predicted_patterns": {
+        "shared_ip_observation": 1
+      },
+      "recall_within_pattern": 0.0,
+      "support": 6
+    }
+  },
+  "per_predicted_role": {
+    "collection_point": {
+      "count": 5,
+      "ground_truth_breakdown": {
+        "normal": 4,
+        "ransomware_collector": 1
+      }
+    },
+    "high_activity_service_like": {
+      "count": 1,
+      "ground_truth_breakdown": {
+        "legit_exchange_high_volume": 1
+      }
+    },
+    "possible_common_control_member": {
+      "count": 17,
+      "ground_truth_breakdown": {
+        "normal": 12,
+        "same_actor_cluster": 5
+      }
+    },
+    "potential_payment_participant": {
+      "count": 109,
+      "ground_truth_breakdown": {
+        "normal": 69,
+        "ransomware_victim_payment": 40
+      }
+    },
+    "sequence_continuation": {
+      "count": 25,
+      "ground_truth_breakdown": {
+        "normal": 18,
+        "peel_chain_hop": 7
+      }
+    },
+    "sequence_side_recipient": {
+      "count": 26,
+      "ground_truth_breakdown": {
+        "normal": 19,
+        "peel_chain_hop": 7
+      }
+    },
+    "unknown_role": {
+      "count": 44,
+      "ground_truth_breakdown": {
+        "coinjoin_mixing": 40,
+        "legit_exchange_high_volume": 1,
+        "peel_chain_hop": 1,
+        "same_actor_cluster": 1,
+        "shared_ip_innocent_noise": 1
+      }
+    }
+  },
+  "run_id": "run_6528edae883f"
+}
