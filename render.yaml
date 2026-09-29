@@ -1,0 +1,35 @@
+# Render Blueprint.
+#
+# Render is used here because its free tier needs no payment card, builds the Dockerfile
+# directly, and signs in with the GitHub account that already hosts this repository.
+#
+# Free-tier limits worth knowing before you rely on this link:
+#   * The service sleeps after 15 minutes without traffic and takes roughly a minute to
+#     wake. The first visitor after a quiet period waits.
+#   * There is no persistent disk. Saved cases are cleared whenever the service
+#     restarts. The application works fully; it just does not remember.
+#   * 512 MB of RAM. The small demo file analyses comfortably. The full 10,000-row
+#     dataset may exhaust memory - run that one locally, or upgrade the instance.
+services:
+  - type: web
+    name: chainlens
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    region: singapore          # nearest free region to India
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      # sync: false means Render prompts for this at deploy time and stores it as a
+      # secret. The application refuses to start on a public address without it.
+      - key: CHAINLENS_AUTH_PASSWORD
+        sync: false
+      # Generated once by Render and kept across deploys, so sessions survive a restart.
+      - key: CHAINLENS_SESSION_SECRET
+        generateValue: true
+      - key: HOST
+        value: 0.0.0.0
+      # Free instances have no mounted disk; /tmp is writable but not persistent.
+      - key: CHAINLENS_DATA_DIR
+        value: /tmp/chainlens_data
