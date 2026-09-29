@@ -178,23 +178,42 @@ def is_loopback(host: str) -> bool:
     return host in {"127.0.0.1", "::1", "localhost", "127.0.0.0/8"}
 
 
+def public_demo_mode() -> bool:
+    """True when the operator has deliberately opened the instance to everyone.
+
+    Running a public instance with no login is a legitimate choice for a demonstration
+    of synthetic data. It is required to be stated explicitly rather than achieved by
+    forgetting to set a password, because those two situations look identical from the
+    outside and only one of them is intended.
+    """
+    return os.environ.get("CHAINLENS_PUBLIC_DEMO", "0").strip() == "1"
+
+
 def enforce_startup_policy(host: str) -> None:
     """Refuse to listen on a public address without a usable password.
 
     This interlock exists because the failure it prevents is silent: an instance bound
     to 0.0.0.0 with no password looks completely healthy while exposing every uploaded
     file, the case database and the source archive to anyone who finds the URL.
+
+    ``CHAINLENS_PUBLIC_DEMO=1`` waives it deliberately.
     """
     if is_loopback(host):
         return
 
     password = configured_password()
     if password is None:
+        if public_demo_mode():
+            return
         raise AuthConfigurationError(
             f"Refusing to bind to {host} without authentication.\n\n"
             "This build has no accounts or roles, so a public instance is protected by "
             "one password. Set CHAINLENS_AUTH_PASSWORD to a strong value and restart.\n\n"
-            "To run locally without a password, bind to 127.0.0.1 instead."
+            "To run locally without a password, bind to 127.0.0.1 instead.\n"
+            "To run an open public demonstration on purpose, set "
+            "CHAINLENS_PUBLIC_DEMO=1 - and read what that means first: anyone who finds "
+            "the URL can upload files, read every case on the instance and export "
+            "evidence from it."
         )
     if len(password) < MIN_PASSWORD_LENGTH:
         raise AuthConfigurationError(

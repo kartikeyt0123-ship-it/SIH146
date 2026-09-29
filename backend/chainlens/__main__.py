@@ -43,11 +43,24 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     protected = auth.auth_enabled()
+    if not protected and not auth.is_loopback(args.host):
+        # Loud, every start. An open public instance should never be a surprise to
+        # whoever is reading the logs later.
+        print(
+            "\n  *** OPEN PUBLIC INSTANCE - NO PASSWORD ***\n"
+            "  Anyone with the URL can upload files, read every case on this instance\n"
+            "  and export evidence from it. Intended for demonstrating synthetic data.\n"
+            "  Set CHAINLENS_AUTH_PASSWORD to require a login.\n",
+            file=sys.stderr)
+
     print(f"ChainLens starting on http://{args.host}:{args.port}")
     print(f"  data directory : {config.DATA_DIR}")
     print(f"  model bundles  : {config.MODEL_DIR}")
     print(f"  frontend build : {config.FRONTEND_DIST}")
-    print(f"  authentication : {'password required' if protected else 'disabled (loopback only)'}")
+    mode = ('password required' if protected
+            else 'OPEN - no password' if not auth.is_loopback(args.host)
+            else 'disabled (loopback only)')
+    print(f"  authentication : {mode}")
     print("  offline: the application makes no outbound network requests.")
 
     uvicorn.run(

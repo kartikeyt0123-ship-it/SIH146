@@ -30,7 +30,9 @@ export default function App() {
   const [creating, setCreating] = useState(false)
   const [notice, setNotice] = useState<string | null>(null)
   //: null while we are still asking the service whether a login is needed.
-  const [session, setSession] = useState<{ required: boolean; ok: boolean } | null>(null)
+  const [session, setSession] = useState<
+    { required: boolean; ok: boolean; demo?: boolean; demoNotice?: string | null } | null
+  >(null)
 
   /**
    * Recover when the selected case no longer exists.
@@ -80,7 +82,12 @@ export default function App() {
   // protected instance every other call would just come back 401.
   useEffect(() => {
     api.authStatus()
-      .then((status) => setSession({ required: status.auth_required, ok: status.authenticated }))
+      .then((status) => setSession({
+        required: status.auth_required,
+        ok: status.authenticated,
+        demo: status.public_demo,
+        demoNotice: status.public_demo_notice,
+      }))
       .catch(() => setSession({ required: false, ok: true }))
   }, [])
 
@@ -195,6 +202,18 @@ export default function App() {
           </span>
         </div>
       </header>
+
+      {/* An open instance says so on every screen, not just in the operator's logs. */}
+      {session.demo ? (
+        <div role="status" style={{
+          background: 'var(--warn-bg)', borderBottom: '1px solid #f0dcb4',
+          color: '#6b4500', fontSize: 'var(--fs-xs)', padding: '6px var(--s4)',
+          display: 'flex', alignItems: 'center', gap: 6,
+        }}>
+          <strong>Open demonstration.</strong>
+          {session.demoNotice ?? 'Anyone with this link can see and upload cases here.'}
+        </div>
+      ) : null}
 
       <main className="main">
         {notice ? (

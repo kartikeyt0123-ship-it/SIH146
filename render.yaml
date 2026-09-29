@@ -21,10 +21,17 @@ services:
     healthCheckPath: /api/health
     autoDeploy: true
     envVars:
-      # sync: false means Render prompts for this at deploy time and stores it as a
-      # secret. The application refuses to start on a public address without it.
-      - key: CHAINLENS_AUTH_PASSWORD
-        sync: false
+      # Open demonstration: no login, so a judge clicking the link on a slide lands
+      # straight in the application.
+      #
+      # This is a deliberate waiver of the startup interlock, not a missing password.
+      # Anyone with the URL can upload files, read every case on the instance and
+      # export evidence from it, so nothing real belongs here. To require a login
+      # instead, delete this key and add:
+      #     - key: CHAINLENS_AUTH_PASSWORD
+      #       sync: false
+      - key: CHAINLENS_PUBLIC_DEMO
+        value: "1"
       # Generated once by Render and kept across deploys, so sessions survive a restart.
       - key: CHAINLENS_SESSION_SECRET
         generateValue: true

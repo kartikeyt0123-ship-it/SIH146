@@ -33,10 +33,18 @@ def auth_status(request: Request) -> dict[str, Any]:
     """Whether authentication is on, and whether this caller is signed in."""
     enabled = auth.auth_enabled()
     token = request.cookies.get(auth.COOKIE_NAME)
+    demo = auth.public_demo_mode() and not enabled
     return {
         "auth_required": enabled,
         "authenticated": (not enabled) or auth.verify_token(token),
         "session_hours": round(auth.SESSION_TTL_SECONDS / 3600, 1),
+        # The interface shows a standing notice in this mode. An open instance should
+        # say so on every screen, not only to whoever configured it.
+        "public_demo": demo,
+        "public_demo_notice": (
+            "Open demonstration instance. Anyone with this link can see the cases here "
+            "and upload their own. Do not put real investigation data on it."
+        ) if demo else None,
     }
 
 

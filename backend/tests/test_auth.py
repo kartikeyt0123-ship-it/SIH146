@@ -201,3 +201,44 @@ def test_uploads_are_blocked_without_a_session(protected_client):
     response = protected_client.post(
         "/api/cases", json={"title": "should not be created"})
     assert response.status_code == 401
+
+
+# ------------------------------------------------------------- open demonstration
+def test_public_demo_waives_the_interlock(monkeypatch):
+    """An open public instance must be chosen deliberately, never reached by omission."""
+    monkeypatch.delenv("CHAINLENS_AUTH_PASSWORD", raising=False)
+    monkeypatch.setenv("CHAINLENS_PUBLIC_DEMO", "1")
+    auth.enforce_startup_policy("0.0.0.0")  # must not raise
+
+
+def test_interlock_still_fires_without_the_explicit_waiver(monkeypatch):
+    monkeypatch.delenv("CHAINLENS_AUTH_PASSWORD", raising=False)
+    monkeypatch.setenv("CHAINLENS_PUBLIC_DEMO", "0")
+    with pytest.raises(auth.AuthConfigurationError):
+        auth.enforce_startup_policy("0.0.0.0")
+
+
+def test_demo_instance_serves_the_api_and_announces_itself(isolated_data_dir, monkeypatch):
+    monkeypatch.delenv("CHAINLENS_AUTH_PASSWORD", raising=False)
+    monkeypatch.setenv("CHAINLENS_PUBLIC_DEMO", "1")
+    client = TestClient(create_app())
+
+    assert client.get("/api/cases").status_code == 200, "an open demo needs no login"
+
+    status = client.get("/api/auth/status").json()
+    assert status["auth_required"] is False
+    assert status["public_demo"] is True
+    assert "upload" in status["public_demo_notice"].lower()
+
+
+def test_a_password_takes_precedence_over_the_demo_flag(isolated_data_dir, monkeypatch):
+    """Setting both must protect the instance, not open it."""
+    monkeypatch.setenv("CHAINLENS_AUTH_PASSWORD", PASSWORD)
+    monkeypatch.setenv("CHAINLENS_PUBLIC_DEMO", "1")
+    auth._attempts.clear()
+    client = TestClient(create_app())
+
+    assert client.get("/api/cases").status_code == 401
+    status = client.get("/api/auth/status").json()
+    assert status["auth_required"] is True
+    assert status["public_demo"] is False
