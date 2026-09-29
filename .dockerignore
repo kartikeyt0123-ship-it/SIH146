@@ -1,0 +1,17 @@
+# Keep the build context small and free of local state.
+**/__pycache__/
+**/*.py[cod]
+backend/.venv/
+backend/.pytest_cache/
+frontend/node_modules/
+frontend/dist/
+chainlens_data/
+.git/
+docs/
+scripts/
+*.md
+# The supplied dataset and answer key are never baked into a deployed image.
+data/samples/ps3_transactions
+data/samples/ps4_ground_truth
+data/samples/ps2_note.txt
+data/samples/demo_mixed_patterns.key.csv

@@ -16,13 +16,23 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
-from .. import config
+from .. import auth, config
 from ..db import init_db
+from .auth_routes import router as auth_router
 from .routes import router
 
 #: Development origins for the Vite dev server. The packaged build serves the frontend
 #: from this same process and needs none of these.
 DEV_ORIGINS = ["http://localhost:5173", "http://127.0.0.1:5173"]
+
+#: API paths reachable without a session. Everything else requires one when a password
+#: is configured. Health is open so a platform can probe the container.
+PUBLIC_API_PATHS = frozenset({
+    "/api/health",
+    "/api/auth/status",
+    "/api/auth/login",
+    "/api/auth/logout",
+})
 
 
 def create_app() -> FastAPI:
@@ -48,7 +58,28 @@ def create_app() -> FastAPI:
             allow_methods=["*"], allow_headers=["*"],
         )
 
+    app.include_router(auth_router, prefix="/api")
     app.include_router(router, prefix="/api")
+
+    @app.middleware("http")
+    async def require_session(request: Request, call_next):
+        """Gate the API behind a session when a password is configured.
+
+        Only /api is gated. The frontend shell is served to anyone so the browser can
+        render the login screen; it shows nothing until the API answers.
+        """
+        path = request.url.path
+        if (auth.auth_enabled()
+                and path.startswith("/api")
+                and path not in PUBLIC_API_PATHS):
+            token = request.cookies.get(auth.COOKIE_NAME)
+            if not auth.verify_token(token):
+                return JSONResponse(
+                    status_code=401,
+                    content={"code": "AUTH_REQUIRED",
+                             "message": "Sign in to use this instance."},
+                )
+        return await call_next(request)
 
     @app.exception_handler(Exception)
     async def unhandled(request: Request, exc: Exception) -> JSONResponse:

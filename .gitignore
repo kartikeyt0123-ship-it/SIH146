@@ -19,3 +19,11 @@ frontend/dist/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Supplied datasets and evaluation answer key.
+# These are competition inputs, not source code. They must never be published:
+# ps4_ground_truth is the answer key the detectors are measured against.
+data/samples/ps3_transactions
+data/samples/ps4_ground_truth
+data/samples/ps2_note.txt
+data/samples/demo_mixed_patterns.key.csv

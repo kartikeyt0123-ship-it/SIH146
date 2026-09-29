@@ -14,6 +14,7 @@ import { InboxScreen } from './screens/InboxScreen'
 import { OverviewScreen } from './screens/OverviewScreen'
 import { UploadScreen } from './screens/UploadScreen'
 import { WorkspaceScreen } from './screens/WorkspaceScreen'
+import { LoginScreen } from './screens/LoginScreen'
 import { Callout, ErrorState, Loading } from './components/common'
 
 type Screen = 'upload' | 'overview' | 'inbox' | 'workspace'
@@ -28,6 +29,8 @@ export default function App() {
   const [error, setError] = useState<unknown>(null)
   const [creating, setCreating] = useState(false)
   const [notice, setNotice] = useState<string | null>(null)
+  //: null while we are still asking the service whether a login is needed.
+  const [session, setSession] = useState<{ required: boolean; ok: boolean } | null>(null)
 
   /**
    * Recover when the selected case no longer exists.
@@ -73,11 +76,20 @@ export default function App() {
     }
   }
 
+  // Ask whether this instance needs a login before loading anything else: on a
+  // protected instance every other call would just come back 401.
   useEffect(() => {
+    api.authStatus()
+      .then((status) => setSession({ required: status.auth_required, ok: status.authenticated }))
+      .catch(() => setSession({ required: false, ok: true }))
+  }, [])
+
+  useEffect(() => {
+    if (!session?.ok) return
     void loadCases()
     api.health().then(setHealth).catch(() => setHealth(null))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [session?.ok])
 
   const createCase = async () => {
     const title = window.prompt('Case title', 'Bitcoin investigation')
@@ -121,6 +133,17 @@ export default function App() {
     </button>
   )
 
+  if (session === null) {
+    return <div className="app"><Loading label="Connecting to the local service…" /></div>
+  }
+  if (session.required && !session.ok) {
+    return (
+      <div className="app">
+        <LoginScreen onSignedIn={() => setSession({ required: true, ok: true })} />
+      </div>
+    )
+  }
+
   return (
     <div className="app">
       <header className="topbar">
@@ -160,6 +183,12 @@ export default function App() {
           <button className="btn btn-sm" onClick={createCase} disabled={creating}>
             <Plus size={12} /> New case
           </button>
+          {session.required ? (
+            <button className="btn btn-sm" title="Sign out of this instance"
+              onClick={async () => { await api.logout(); setSession({ required: true, ok: false }) }}>
+              Sign out
+            </button>
+          ) : null}
           <span className="offline-pill" title="This application makes no outbound network requests.">
             <WifiOff size={11} aria-hidden="true" />
             Offline

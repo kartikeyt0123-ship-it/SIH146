@@ -120,6 +120,10 @@ export const api = {
     `/api/exports/${exportId}/files/${encodeURIComponent(filename)}`,
 
   audit: (caseId: string) => request<any>(`/api/cases/${caseId}/audit`),
+
+  authStatus: () => request<any>('/api/auth/status'),
+  login: (password: string) => request<any>('/api/auth/login', json({ password })),
+  logout: () => request<any>('/api/auth/logout', { method: 'POST' }),
 }
 
 /** Satoshis to a BTC string. Integer maths only; no floating-point rounding. */

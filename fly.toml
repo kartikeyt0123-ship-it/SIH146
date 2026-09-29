@@ -1,0 +1,44 @@
+# Fly.io deployment. Chosen because it gives a persistent volume and a long-running
+# process - both of which this application needs and serverless platforms cannot offer.
+app = "chainlens"
+primary_region = "bom"          # Mumbai; change to your nearest region
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  HOST = "0.0.0.0"
+  PORT = "8000"
+  CHAINLENS_DATA_DIR = "/data"
+
+# Cases, uploads, predictions and exports live here and survive restarts and redeploys.
+[[mounts]]
+  source = "chainlens_data"
+  destination = "/data"
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  # Keeping one machine always running avoids a cold start when a judge opens the link.
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+
+  [http_service.concurrency]
+    type = "requests"
+    soft_limit = 20
+    hard_limit = 40
+
+[[vm]]
+  # Analysis is CPU-bound and holds the dataset in memory; 1 GB is comfortable for the
+  # 10,000-row file and leaves headroom for the model.
+  size = "shared-cpu-1x"
+  memory = "1gb"
+
+[checks.health]
+  type = "http"
+  port = 8000
+  path = "/api/health"
+  interval = "30s"
+  timeout = "5s"
+  grace_period = "20s"

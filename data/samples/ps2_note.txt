@@ -1,5 +1,0 @@
-bitcoin_transactions.csv — this is what your ingestion pipeline reads. is_planted_suspicious is in there for your convenience, but strip that column before it touches your model — feeding it in is cheating, your pipeline has to earn the flag itself.
-
-ground_truth.csv — wallet-level labels (wallet_id, is_suspicious, pattern_type). This is what you score precision/recall/false-positive-rate against. Keep this file away from your detection code entirely; it's evaluation-only.
-
-generate_dataset.py — the generator itself, seeded (random.seed(42)) so it's reproducible. Worth handing this to your teammate too: if 10k rows turns out too slow for a live demo, drop N_NORMAL_TX and the exchange-wallet loop count (400) and regenerate — everything else scales automatically.
