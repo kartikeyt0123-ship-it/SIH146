@@ -7,8 +7,9 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 
-# Trained model bundles are build artefacts, rebuilt with chainlens.ml.train
-backend/model_artifacts/
+# The trained model bundle IS a release artefact: the Dockerfile copies it into the
+# image, and the PRD requires shipping a trusted, packaged model. It holds fitted
+# parameters and derived scores only - no addresses, no transactions, no labels.
 
 # Frontend
 frontend/node_modules/

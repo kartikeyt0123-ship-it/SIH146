@@ -1,0 +1,123 @@
+{
+  "algorithm": "sklearn.ensemble.IsolationForest",
+  "bundle_format": "chainlens-model/v1",
+  "environment": {
+    "numpy": "2.2.1",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.10",
+    "scikit_learn": "1.6.0"
+  },
+  "feature_manifest": {
+    "definitions": {
+      "activity_span_hours": "Hours between the address's first and last observed transaction. 0.0 for a single event; read with has_multiple_events.",
+      "distinct_counterparties": "Union of distinct senders and receivers.",
+      "distinct_receivers": "Distinct addresses appearing as outputs of transactions this address funds. Co-occurrence within a transaction, not a proven payee link.",
+      "distinct_senders": "Distinct addresses appearing as inputs of transactions that pay this address. Co-occurrence within a transaction, not a proven payer-to-payee link.",
+      "equal_output_participation": "Share of the address's transactions whose outputs contain a repeated denomination group, i.e. an equal-value batch structure.",
+      "has_multiple_events": "1.0 when the address appears in more than one transaction, otherwise 0.0. Marks whether the timing features above are defined.",
+      "incoming_tx_count": "Transactions in which the address is an output.",
+      "incoming_value_concentration": "Largest single receipt divided by total received; 0.0 when nothing was received. 1.0 means all value arrived in one transaction.",
+      "max_tx_in_24h": "Largest number of the address's transactions inside any 24-hour window.",
+      "mean_incoming_sats_log": "log1p of the mean per-transaction amount received.",
+      "mean_input_count": "Mean number of inputs of the transactions the address is in.",
+      "mean_output_count": "Mean number of outputs of the transactions the address is in.",
+      "median_inter_event_hours": "Median gap between consecutive transactions involving the address. 0.0 when the address has a single event; read with has_multiple_events.",
+      "outgoing_tx_count": "Transactions in which the address is an input.",
+      "received_sats_log": "log1p of total satoshis received in the imported period.",
+      "repeated_co_input_partners": "Number of distinct addresses co-spent with this address in more than one transaction. Collaborative transactions are excluded from the count.",
+      "spent_sats_log": "log1p of total satoshis contributed as an input.",
+      "tx_count": "Transactions in the imported period in which the address appears at all."
+    },
+    "excluded_from_model": {
+      "address_string": "Identity. Encoding it would let the model memorise specific addresses.",
+      "amount_discrepancy_magnitude": "A generation artefact of the supplied file, not behaviour. Excluded so it cannot become a shortcut for finding planted rows.",
+      "fee_rate": "Cannot be computed: the contract has no virtual transaction size.",
+      "ground_truth_membership": "Evaluation label proxy.",
+      "is_planted_suspicious / is_suspicious / pattern_type": "Evaluation labels.",
+      "script_type": "Metadata about the record, and transaction-level rather than address-level.",
+      "src_ip / dst_ip / ports": "Network identity. Kept as displayed context only; an IP does not establish transaction origin or address ownership.",
+      "txid": "Identity, and unique per row."
+    },
+    "feature_order": [
+      "tx_count",
+      "incoming_tx_count",
+      "outgoing_tx_count",
+      "distinct_senders",
+      "distinct_receivers",
+      "distinct_counterparties",
+      "received_sats_log",
+      "spent_sats_log",
+      "mean_incoming_sats_log",
+      "incoming_value_concentration",
+      "mean_input_count",
+      "mean_output_count",
+      "equal_output_participation",
+      "repeated_co_input_partners",
+      "median_inter_event_hours",
+      "activity_span_hours",
+      "max_tx_in_24h",
+      "has_multiple_events"
+    ],
+    "missing_value_policy": "Timing statistics are undefined for an address with one event. They are set to 0.0 and accompanied by has_multiple_events=0.0 so the model can distinguish 'not measured' from 'measured as zero'. No feature is imputed from another address.",
+    "schema_version": "address-features/v1",
+    "unit_notes": "Values are integer satoshis before the log transform; times are hours. Counts are of records in the imported period only and are not a claim about an address's complete history or balance."
+  },
+  "feature_order": [
+    "tx_count",
+    "incoming_tx_count",
+    "outgoing_tx_count",
+    "distinct_senders",
+    "distinct_receivers",
+    "distinct_counterparties",
+    "received_sats_log",
+    "spent_sats_log",
+    "mean_incoming_sats_log",
+    "incoming_value_concentration",
+    "mean_input_count",
+    "mean_output_count",
+    "equal_output_participation",
+    "repeated_co_input_partners",
+    "median_inter_event_hours",
+    "activity_span_hours",
+    "max_tx_in_24h",
+    "has_multiple_events"
+  ],
+  "feature_schema_version": "address-features/v1",
+  "fit_seconds": 0.567,
+  "held_out_addresses": [],
+  "integrity_sha256": "a323625414e57a963ebb4aa5f3e6e81a3ce03b91e22c6576de4b92be61ca9fe1",
+  "labels_used": "none - Isolation Forest is unsupervised and no label column reaches this pipeline",
+  "model_version": "if-v1-20260925-7a1719",
+  "parameters": {
+    "bootstrap": false,
+    "contamination": "auto",
+    "max_samples": "auto",
+    "n_estimators": 200,
+    "n_jobs": 1
+  },
+  "preprocessing": [
+    "SimpleImputer(constant 0.0)",
+    "QuantileTransformer(normal, n_quantiles=1000)"
+  ],
+  "random_seed": 42,
+  "reference_distribution": {
+    "size": 3197,
+    "source": "development fit population",
+    "tie_policy": "midpoint of the tied rank block"
+  },
+  "score_direction": "higher_is_more_unusual",
+  "score_direction_note": "sklearn score_samples returns higher-is-more-normal; the bundle negates it once so every displayed score and percentile is higher-is-more-unusual.",
+  "trained_at": "2026-09-25T09:52:31Z",
+  "training_data": {
+    "addresses_fitted": 3197,
+    "addresses_held_out": 0,
+    "addresses_total": 3197,
+    "file_name": "ps3_transactions",
+    "file_sha256": "4f01ef336366867485db22c1113036e8f2b5bbd0c51c4b036698c4491e8de3de",
+    "holdout_fraction": 0.0,
+    "holdout_unit": "address (entity-disjoint)",
+    "rows": 10000,
+    "validation_mode": "compatibility"
+  },
+  "validation_status": "EXPLORATORY. Fitted on the supplied synthetic dataset. Scores describe how unusual an address looks relative to this population; they are not calibrated probabilities and are not a measurement of unseen-data performance."
+}
