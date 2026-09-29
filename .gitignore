@@ -28,3 +28,7 @@ data/samples/ps3_transactions
 data/samples/ps4_ground_truth
 data/samples/ps2_note.txt
 data/samples/demo_mixed_patterns.key.csv
+
+# TypeScript incremental build cache — stale entries can make a clean container build
+# skip compilation entirely.
+frontend/tsconfig.tsbuildinfo

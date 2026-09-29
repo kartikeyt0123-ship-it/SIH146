@@ -1,1 +1,0 @@
-{"root":["./src/app.tsx","./src/api.ts","./src/main.tsx","./src/components/evidencecard.tsx","./src/components/graphview.tsx","./src/components/sourcerowdialog.tsx","./src/components/common.tsx","./src/screens/inboxscreen.tsx","./src/screens/loginscreen.tsx","./src/screens/overviewscreen.tsx","./src/screens/uploadscreen.tsx","./src/screens/workspacescreen.tsx"],"version":"5.7.2"}
